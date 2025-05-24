@@ -5,6 +5,7 @@ import 'package:flutter_sqlite_auth_app/Views/auth.dart';
 import 'package:flutter_sqlite_auth_app/providers/meal_provider.dart';
 import 'package:flutter_sqlite_auth_app/providers/workout_provider.dart';
 import 'package:flutter_sqlite_auth_app/providers/auth_provider.dart';
+import 'package:flutter_sqlite_auth_app/providers/meal_api_provider.dart';
 import 'package:flutter_sqlite_auth_app/screens/dashboard/dashboard_screen.dart';
 import 'package:flutter_sqlite_auth_app/screens/auth/login_screen.dart';
 import 'package:flutter_sqlite_auth_app/screens/auth/register_screen.dart';
@@ -12,11 +13,19 @@ import 'package:flutter_sqlite_auth_app/screens/workout/workout_list_screen.dart
 import 'package:flutter_sqlite_auth_app/screens/workout/workout_form_screen.dart';
 import 'package:flutter_sqlite_auth_app/screens/meal/meal_list_screen.dart';
 import 'package:flutter_sqlite_auth_app/screens/meal/meal_form_screen.dart';
+import 'package:flutter_sqlite_auth_app/screens/meal/meal_api_screen.dart';
 import 'package:flutter_sqlite_auth_app/screens/profile/profile_screen.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:intl/date_symbol_data_local.dart';
 
-void main() {
+
+void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+
+  // Initialisation de la locale pour les dates
+  await initializeDateFormatting('fr_FR', null);
+
+  // Configuration de l'interface système
   SystemChrome.setSystemUIOverlayStyle(
     const SystemUiOverlayStyle(
       statusBarColor: Colors.transparent,
@@ -27,6 +36,8 @@ void main() {
       statusBarIconBrightness: Brightness.dark,
     ),
   );
+
+  // Lancement de l'application
   runApp(const MyApp());
 }
 
@@ -40,6 +51,7 @@ class MyApp extends StatelessWidget {
         ChangeNotifierProvider(create: (_) => AuthProvider()),
         ChangeNotifierProvider(create: (_) => MealProvider()),
         ChangeNotifierProvider(create: (_) => WorkoutProvider()),
+        ChangeNotifierProvider(create: (_) => MealApiProvider()),
       ],
       child: MaterialApp(
         debugShowCheckedModeBanner: false,
@@ -114,6 +126,7 @@ class MyApp extends StatelessWidget {
           '/workout_form': (_) => const WorkoutFormScreen(),
           '/meals': (_) => const MealListScreen(),
           '/meal_form': (_) => const MealFormScreen(),
+          '/meal_api': (_) => const MealApiScreen(),
           '/profile': (_) => const ProfileScreen(),
         },
         // Gestion des routes non trouvées

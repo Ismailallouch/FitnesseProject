@@ -35,7 +35,7 @@ class DatabaseHelper {
   Future<Database> _initDB() async {
     final dbPath = await getDatabasesPath();
     final path = join(dbPath, databaseName);
-// Supprimer la base de données existante
+
     
     return openDatabase(
       path, 
@@ -45,6 +45,16 @@ class DatabaseHelper {
         
       }
     );
+  }
+  //  AJOUTE cette méthode ici
+  Future<bool> isUsernameTaken(String username) async {
+    final dbClient = await database;
+    var res = await dbClient.query(
+      'users',
+      where: 'usrName = ?',
+      whereArgs: [username],
+    );
+    return res.isNotEmpty;
   }
 
   // Authentification sécurisée
@@ -60,9 +70,21 @@ class DatabaseHelper {
 
   // Inscription
   Future<int> createUser(Users usr) async {
-    final db = await database;
-    return await db.insert('users', usr.toMap());
+  final db = await database;
+  
+  // Check if user already exists
+  final existing = await db.query(
+    'users',
+    where: 'usrName = ?',
+    whereArgs: [usr.usrName],
+  );
+  
+  if (existing.isNotEmpty) {
+    throw Exception('Username "${usr.usrName}" is already taken');
   }
+  
+  return await db.insert('users', usr.toMap());
+}
 
   // Récupération d'un utilisateur
   Future<Users?> getUser(String usrName) async {

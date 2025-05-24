@@ -104,6 +104,15 @@ class _SignupScreenState extends State<SignupScreen> with TickerProviderStateMix
       });
       return;
     }
+    // ➕ Ajouter cette vérification ici
+bool usernameExists = await db.isUsernameTaken(usrName.text);
+if (usernameExists) {
+  setState(() {
+    _isLoading = false;
+    _errorMessage = 'Username déjà existant. Veuillez en choisir un autre.';
+  });
+  return;
+}
 
     // Simulation d'un délai pour l'effet de loading
     await Future.delayed(const Duration(milliseconds: 2000));
